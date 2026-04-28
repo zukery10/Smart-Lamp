@@ -17,6 +17,8 @@ IMAGE_PATH = os.path.join(STATIC_DIR, "last_visitor.jpg") #set image path
 sense = SenseHat()
 camera = Picamera2()
 
+x,y,w,h = 55,336,100,150
+
 capture_config = camera.create_video_configuration()
 camera.start()
 
@@ -33,21 +35,29 @@ def capture_photo():
 
 while True:
     frame = camera.capture_array() #https://forums.raspberrypi.com/viewtopic.php?t=363106#p2178171
-    grayScale = cv.cvtColor(frame,cv.COLOR_BGR2GRAY)#https://www.geeksforgeeks.org/python/python-grayscaling-of-images-using-opencv/
-    currentFrame = cv.GaussianBlur(grayScale, (21, 21), 0) # blurs image
 
+    roi = frame[y:y+h, x:x+w] #https://learnopencv.com/cropping-an-image-using-opencv/
+    grayScale = cv.cvtColor(roi,cv.COLOR_BGR2GRAY)#https://www.geeksforgeeks.org/python/python-grayscaling-of-images-using-opencv/
+    currentFrame = cv.GaussianBlur(grayScale, (21, 21), 0) # blurs image so it removes noise
+   
     if backgroundFrame is None: 
         backgroundFrame = currentFrame  #captures the first frame
-        continue
+        continue # then restart while loop to capture current frames
     diff = cv.absdiff(backgroundFrame,currentFrame) #https://docs.opencv.org/4.x/d2/de8/group__core__array.html#ga6fef31bc8c4071cbc114a758a2b79c14
     
     motion_detection = np.sum(diff) #https://numpy.org/devdocs/reference/generated/numpy.sum.html
-    if motion_detection > 7000000:
-        sense.clear(0,255,0)
+    #print(motion_detection)
+    if motion_detection > 500000:
+        
+        sense.clear(255,255,0)
         print("Motion")
-        time.sleep(1)
+        time.sleep(.1)
+        capture_photo()
+        
     else:
+        backgroundFrame = cv.addWeighted(currentFrame, 0.05, backgroundFrame, 0.95, 0) #this makes the background adaptive
         sense.clear()
+        cv.imwrite("debug.jpg", backgroundFrame)
     
 
    
