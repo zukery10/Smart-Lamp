@@ -83,7 +83,7 @@ def sense_motion():
             if duration >= .5: #if the time taken in motion is less then .5 of a second send the message, avg time to talk through a door
                 sense.clear(255,0,0)
                 print("Motion")
-                time.sleep(3)
+                time.sleep(1)
                 return True  
         else:
             backgroundFrame = cv.addWeighted(currentFrame, 0.05, backgroundFrame, 0.95, 0) #this makes the background adaptive, blends background img to current slowly
@@ -91,6 +91,7 @@ def sense_motion():
             cv.imwrite("debug.jpg", frame)
             time_triggered = None # resets
             triggered = False # resets
+            
             
     
     
