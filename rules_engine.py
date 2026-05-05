@@ -1,11 +1,13 @@
 import json
+from datetime import datetime
 
 #https://github.com/UselessMnemonic/OpenWiz
-
+lamp_on_time = "15:00:00"
+format_time  ="%H:%M:%S"
 
 def if_motion_detected(motion, triggered):
     payload = None
-    if motion and not triggered:
+    if motion and triggered == False:
         payload = {
             "method": "setPilot",
             "params":{
@@ -24,3 +26,13 @@ def if_motion_detected(motion, triggered):
 
     print(motion)
     return payload
+
+def checkTime(lamp_on_time):
+    format_time  ="%H:%M:%S"
+    now = datetime.now()
+    now = now.strftime("%H:%M:%S")
+    
+    if datetime.strptime(now,format_time) > datetime.strptime(lamp_on_time,format_time):
+        return True
+    else: 
+        return False

@@ -17,13 +17,13 @@ def getLightState(): #not working yet
     message = str(json.dumps(payload))
     message = message.encode('utf-8')
     sock.sendto(message,(UDP_IP_PLUG,UDP_PORT))
-    message = sock.recvfrom(1024)
-    return message
+    message = sock.recv(1024)# amount of bytes to reciece
+    jdata = json.loads(message.decode('utf-8'))#https://www.reddit.com/r/Python/comments/486nl3/anyone_know_how_to_get_json_from_a_socket/
+    stateValue = jdata['result']['state']#https://stackoverflow.com/questions/12934699/selecting-fields-from-json-output
+    return stateValue
    
 
-
-
-def lightState(payload):
+def setLightState(payload):
     
     UDP_IP_PLUG = "192.168.2.182"  # Plug IP
     UDP_PORT = 38899 # Port it uses from the Github ref

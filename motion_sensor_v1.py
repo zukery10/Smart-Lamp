@@ -18,10 +18,6 @@ IMAGE_PATH = os.path.join(STATIC_DIR, "last_visitor.jpg") #set image path
 
 sense = SenseHat()
 camera = Picamera2()
-
-x,y,w,h = 640,87,191,160 # https://pixspy.com/ - to find x,y,w,h
-#https://www.photopea.com/
-
 capture_config = camera.create_video_configuration()
 camera.configure(capture_config)
 camera.start()
@@ -48,11 +44,9 @@ def capture_photo():
     print("Photo saved to:", IMAGE_PATH)
 
 def sense_motion():
-    x,y,w,h = 640,87,191,160 # https://pixspy.com/ - to find x,y,w,h
+    x,y,w,h = 592,29,220,103 # https://pixspy.com/ - to find x,y,w,h
                                     #https://www.photopea.com/
     backgroundFrame = None
-    triggered = None
-    time_triggered = None
     while True:
 
         frame = camera.capture_array() #https://forums.raspberrypi.com/viewtopic.php?t=363106#p2178171
@@ -60,37 +54,33 @@ def sense_motion():
         roi = frame[y:y+h, x:x+w] #https://learnopencv.com/cropping-an-image-using-opencv/
         grayScale = cv.cvtColor(roi,cv.COLOR_BGR2GRAY)#https://www.geeksforgeeks.org/python/python-grayscaling-of-images-using-opencv/
         currentFrame = cv.GaussianBlur(grayScale, (21, 21), 0) # blurs image so it removes noise
-        cv.rectangle(frame,(x,x+w),(y,y+h), (255,0,0), 2) #draw a rectangle to debug
+        #currentFrame = cv.add(currentFrame, np.array([60.0]))  
+        cv.rectangle(frame,(500,20),(700,140) ,(0,255,0), 2) #draw a rectangle to debug
         if backgroundFrame is None: 
             backgroundFrame = currentFrame  #captures the first frame
             continue # then restart while loop to capture current frames
 
 
-        diff = cv.absdiff(backgroundFrame,currentFrame) #https://docs.opencv.org/4.x/d2/de8/group__core__array.html#ga6fef31bc8c4071cbc114a758a2b79c14    
-        motion_detection = np.mean(diff) #https://numpy.org/devdocs/reference/generated/numpy.sum.html
-        #print(motion_detection)
+        diff = cv.absdiff(backgroundFrame,currentFrame) #https://docs.opencv.org/4.x/d2/de8/group__core__array.html#ga6fef31bc8c4071cbc114a758a2b79c14     
+        _,thresh1 = cv.threshold(diff,30,255,cv.THRESH_BINARY) #https://techskillguru.com/opencv/motion-detector-and-alert-system-in-opencv
+        #motion_detection = np.sum(diff) #https://numpy.org/devdocs/reference/generated/numpy.sum.html
+        motion_pixels = np.count_nonzero(thresh1) #https://techskillguru.com/opencv/motion-detector-and-alert-system-in-opencv
 
-
-        if motion_detection > 10:
+        #print(motion_pixels)
+        if motion_pixels > 3000: #sensitivy
             triggered = True
-            if time_triggered is None: # gets the time triggered
-                time_triggered = time.time()
-
-            duration = time.time() - time_triggered #time taken from trigger to now
-            
-
-
-            if duration >= .5: #if the time taken in motion is less then .5 of a second send the message, avg time to talk through a door
-                sense.clear(255,0,0)
-                print("Motion")
-                time.sleep(1)
-                return True  
+            sense.clear(255,0,0)
+            print("Motion") 
+            time.sleep(1) 
+                      
+            return True  
         else:
             backgroundFrame = cv.addWeighted(currentFrame, 0.05, backgroundFrame, 0.95, 0) #this makes the background adaptive, blends background img to current slowly
             sense.clear()
-            cv.imwrite("debug.jpg", frame)
-            time_triggered = None # resets
+            cv.imwrite("debug.jpg", thresh1)
             triggered = False # resets
+
+        backgroundFrame = currentFrame #update frame to adapt to new lighting
             
             
     
