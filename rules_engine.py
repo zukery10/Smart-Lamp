@@ -28,7 +28,7 @@ def if_motion_detected(motion, triggered):
     return payload
 
 def checkTime(lamp_on_time):
-    lamp_on_time = "19:00:00" 
+    #lamp_on_time = "13:00:00" 
     format_time  ="%H:%M:%S"
     now = datetime.now()
     now = now.strftime("%H:%M:%S")
