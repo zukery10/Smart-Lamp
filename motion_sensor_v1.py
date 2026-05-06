@@ -32,7 +32,7 @@ def sense_motion(camera):
     #print(motion_pixels)
     if motion_pixels > 3000: #sensitivy
         time.sleep(1) 
-                    
+        print("motion")          
         return True  
     else:
         backgroundFrame = cv.addWeighted(currentFrame, 0.05, backgroundFrame, 0.95, 0) #this makes the background adaptive, blends background img to current slowly

@@ -4,28 +4,26 @@ from datetime import datetime
 #https://github.com/UselessMnemonic/OpenWiz
 lamp_on_time = "15:00:00"
 format_time  ="%H:%M:%S"
+prev_motion = False
 
-def if_motion_detected(motion, triggered):
-    payload = None
-    if motion and triggered == False:
-        payload = {
-            "method": "setPilot",
-            "params":{
-                "state": True
-            }
-        }
-        triggered = True
-    elif motion and triggered:
-        triggered = False
-        payload = {
-            "method": "setPilot",
-            "params":{
-                "state": False
-            }
-        }
+def processMotionEvent(motion, lightState):
+    
+    global prev_motion, light_state
+    light_state = lightState  #sets the state of the light 
 
-    print(motion)
-    return payload
+    #motion is happening and not happening before = True
+    #motion is happening and it happened before = False
+    if motion and not prev_motion: # checks for new motion event , prev_motion = was motion in previous frame, motion = was there motion
+        light_state = not light_state
+
+    prev_motion = motion  # sets the previous motion type
+    return light_state
+
+def processTemp(temp,humidity):
+    kelvin = (2*temp) * humidity * 1.5
+    print(kelvin)
+    return int(kelvin)
+        
 
 def checkTime(lamp_on_time):
     #lamp_on_time = "13:00:00" 
