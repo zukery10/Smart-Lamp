@@ -1,15 +1,15 @@
 import json
 from datetime import datetime
-
+from light_controller import getLightState
 #https://github.com/UselessMnemonic/OpenWiz
 lamp_on_time = "15:00:00"
 format_time  ="%H:%M:%S"
 prev_motion = False
-
-def processMotionEvent(motion, lightState):
+light_state = getLightState()
+def processMotionEvent(motion):
     
     global prev_motion, light_state
-    light_state = lightState  #sets the state of the light 
+    #light_state = lightState  #sets the state of the light 
 
     #motion is happening and not happening before = True
     #motion is happening and it happened before = False

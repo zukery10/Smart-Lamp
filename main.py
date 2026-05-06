@@ -11,6 +11,9 @@ capture_config = camera.create_video_configuration()
 camera.configure(capture_config)
 camera.start()
 
+
+#need to figure out method to adapt sensitivity to lighting - brighter light sets off motion
+
 lamp_on_time = "13:00:00"
 while True:
     light_state = getLightState()
@@ -19,12 +22,13 @@ while True:
 
 
         #print("On time")
-        event = processMotionEvent(sense_motion(camera),light_state)
+        event = processMotionEvent(sense_motion(camera))
         sendUDP(setLightState(event))
 
-        sendUDP(setLightWarmth(processTemp(capture_temp(),capture_humidity())))
+        #sendUDP(setLightWarmth(processTemp(capture_temp(),capture_humidity())))
 
     
+
 
 
 

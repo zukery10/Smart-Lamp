@@ -29,15 +29,25 @@ def sense_motion(camera):
     #motion_detection = np.sum(diff) #https://numpy.org/devdocs/reference/generated/numpy.sum.html
     motion_pixels = np.count_nonzero(thresh1) #https://techskillguru.com/opencv/motion-detector-and-alert-system-in-opencv
 
-    #print(motion_pixels)
+
+
+
+    print(motion_pixels)
+
+
+
     if motion_pixels > 3000: #sensitivy
+        motion_counter += 1
         time.sleep(1) 
-        print("motion")          
-        return True  
+        print("motion") 
+        if motion_counter > 2:
+         
+            return True  
     else:
-        backgroundFrame = cv.addWeighted(currentFrame, 0.05, backgroundFrame, 0.95, 0) #this makes the background adaptive, blends background img to current slowly
+        backgroundFrame = cv.addWeighted(currentFrame, 0.01, backgroundFrame, 0.99, 0) #this makes the background adaptive, blends background img to current slowly
         #sense.clear()
         cv.imwrite("debug.jpg", thresh1)
+        motion_counter = 0
         
 
     backgroundFrame = currentFrame #update frame to adapt to new lighting
