@@ -15,12 +15,12 @@ prev_motion = False
 light_state = getLightState()
 
 
-def processMotionEvent(motion, secureMode):
+def processMotionEvent(motion, secureMode,temp):
     global prev_motion, light_state
     #light_state = lightState  #sets the state of the light 
     #motion is happening and not happening before = True
     #motion is happening and it happened before = False
-    
+
     if not motion: #if no motion then the previous motion is false - no motion before motion?????
         prev_motion = False
 
@@ -29,7 +29,17 @@ def processMotionEvent(motion, secureMode):
         sense.clear(0,255,0)
         prev_motion = True  # sets the previous motion type
         print("Motion")
-        return {"state" : light_state} # https://www.w3schools.com/python/python_dictionaries.asp return a dictionary for more control
+
+        if not light_state:
+            return {"state" : light_state} # https://www.w3schools.com/python/python_dictionaries.asp return a dictionary for more control
+        if light_state:
+            return {"state" : light_state,
+                "temp": temp,
+                "r":255,
+                "g": 255,
+                "b": 255}    
+
+
     
     if motion and not prev_motion and secureMode:
         print("Security Breach")

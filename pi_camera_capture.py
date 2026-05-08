@@ -1,5 +1,3 @@
-
-#cap img = grayscale = blur = compare = print
 from picamera2 import Picamera2
 import time, os
 from picamera2.encoders import H264Encoder
@@ -26,12 +24,12 @@ def capture_video(camera,filename="lastVisitor.h264", duration=2):
     time.sleep(duration)
     print("Stopped video...")
     camera.stop_recording()
-    camera.stop()
+    #camera.stop()
     
 def capture_photo(camera,sense):
     print("Capturing visitor photo...")
     camera.capture_file(IMAGE_PATH)
-    sense.clear(0, 255, 0)  # flash green
-    time.sleep(2)
-    sense.clear(0, 0, 0)
+    #sense.clear(0, 255, 0)  # flash green
+    #time.sleep(2)
+    #sense.clear(0, 0, 0)
     print("Photo saved to:", IMAGE_PATH)
