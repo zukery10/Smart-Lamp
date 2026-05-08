@@ -5,13 +5,19 @@ import cv2 as cv
 import numpy as np
 import time
 
+from sense_hat import SenseHat
+
+
+sense = SenseHat()
 backgroundFrame = None
+motion_counter = 0
 def sense_motion(camera):
+    
     x,y,w,h = 592,29,220,103 # https://pixspy.com/ - to find x,y,w,h
                                     #https://www.photopea.com/
     
     global backgroundFrame #https://www.w3schools.com/python/python_variables_global.asp - so the main.py can access it
-
+    global motion_counter
     frame = camera.capture_array() #https://forums.raspberrypi.com/viewtopic.php?t=363106#p2178171
 
     roi = frame[y:y+h, x:x+w] #https://learnopencv.com/cropping-an-image-using-opencv/
@@ -32,25 +38,26 @@ def sense_motion(camera):
 
 
 
-    print(motion_pixels)
+    #print(motion_pixels)
 
 
 
     if motion_pixels > 3000: #sensitivy
+       
         motion_counter += 1
-        time.sleep(1) 
-        print("motion") 
+        #time.sleep(1) 
+        #print(motion_counter) 
+
         if motion_counter > 2:
-         
             return True  
+            
     else:
         backgroundFrame = cv.addWeighted(currentFrame, 0.01, backgroundFrame, 0.99, 0) #this makes the background adaptive, blends background img to current slowly
-        #sense.clear()
-        cv.imwrite("debug.jpg", thresh1)
+        sense.clear()
+        cv.imwrite("debug.jpg", frame)
         motion_counter = 0
-        
-
-    backgroundFrame = currentFrame #update frame to adapt to new lighting
+       
+    #backgroundFrame = currentFrame #update frame to adapt to new lighting
         
         
 

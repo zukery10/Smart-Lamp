@@ -35,11 +35,10 @@ def getLightState(): #not working yet
    
 
 def setLightState(state):
+    print(state)
     payload = {
             "method": "setPilot",
-            "params":{
-                "state": state
-            }
+            "params":state
         }
     return payload
 

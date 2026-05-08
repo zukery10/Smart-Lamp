@@ -1,27 +1,49 @@
 import json
 from datetime import datetime
 from light_controller import getLightState
+from sense_hat import SenseHat
+
+
+sense = SenseHat()
+
+
+
 #https://github.com/UselessMnemonic/OpenWiz
 lamp_on_time = "15:00:00"
 format_time  ="%H:%M:%S"
 prev_motion = False
 light_state = getLightState()
-def processMotionEvent(motion):
-    
+
+
+def processMotionEvent(motion, secureMode):
     global prev_motion, light_state
     #light_state = lightState  #sets the state of the light 
-
     #motion is happening and not happening before = True
     #motion is happening and it happened before = False
-    if motion and not prev_motion: # checks for new motion event , prev_motion = was motion in previous frame, motion = was there motion
-        light_state = not light_state
+    
+    if not motion: #if no motion then the previous motion is false - no motion before motion?????
+        prev_motion = False
 
-    prev_motion = motion  # sets the previous motion type
-    return light_state
+    if motion and not prev_motion and not secureMode: # checks for new motion event , prev_motion = was motion in previous frame, motion = was there motion
+        light_state = not light_state
+        sense.clear(0,255,0)
+        prev_motion = True  # sets the previous motion type
+        print("Motion")
+        return {"state" : light_state} # https://www.w3schools.com/python/python_dictionaries.asp return a dictionary for more control
+    
+    if motion and not prev_motion and secureMode:
+        print("Security Breach")
+        sense.clear(255,0,0)
+        return {"alert" : True,
+                "captureVideo" : True,
+                "senseLight" : True,
+                "state" : True,
+                "r" : 255} #returns that there's been an alert and captures video
+    return None
 
 def processTemp(temp,humidity):
     kelvin = (2*temp) * humidity * 1.5
-    print(kelvin)
+    #print(kelvin)
     return int(kelvin)
         
 
@@ -32,8 +54,10 @@ def checkTime(lamp_on_time):
     now = now.strftime("%H:%M:%S")
     
     if datetime.strptime(now,format_time) > datetime.strptime(lamp_on_time,format_time):
-        return True
+        return {"time" : True}
     else: 
-        return False
+        return {"time" : False}
+    
+
 
 
