@@ -3,7 +3,7 @@ from datetime import datetime
 from light_controller import getLightState
 from sense_hat import SenseHat
 
-
+import time
 sense = SenseHat()
 
 
@@ -37,18 +37,14 @@ def processMotionEvent(motion, secureMode,temp):
                 "temp": temp,
                 "r":255,
                 "g": 255,
-                "b": 255}    
-
-
-    
+                "b": 255}   
+        time.sleep(3) 
+  
     if motion and not prev_motion and secureMode:
         print("Security Breach")
         sense.clear(255,0,0)
-        return {"alert" : True,
-                "captureVideo" : True,
-                "senseLight" : True,
-                "state" : True,
-                "r" : 255} #returns that there's been an alert and captures video
+        return {"secureMode": True,
+                "r" : 255} #returns that there's been an alert and captures video also turns light red
     return None
 
 def processTemp(temp,humidity):

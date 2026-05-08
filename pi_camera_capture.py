@@ -29,7 +29,7 @@ def capture_video(camera,filename="lastVisitor.h264", duration=2):
 def capture_photo(camera,sense):
     print("Capturing visitor photo...")
     camera.capture_file(IMAGE_PATH)
-    #sense.clear(0, 255, 0)  # flash green
+    sense.clear(0, 255, 0)  # flash green
     #time.sleep(2)
     #sense.clear(0, 0, 0)
     print("Photo saved to:", IMAGE_PATH)

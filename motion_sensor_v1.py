@@ -13,7 +13,7 @@ backgroundFrame = None
 motion_counter = 0
 def sense_motion(camera):
     
-    x,y,w,h = 592,29,220,103 # https://pixspy.com/ - to find x,y,w,h
+    x,y,w,h = 700,20,200,120 # https://pixspy.com/ - to find x,y,w,h
                                     #https://www.photopea.com/
     
     global backgroundFrame #https://www.w3schools.com/python/python_variables_global.asp - so the main.py can access it
@@ -24,7 +24,7 @@ def sense_motion(camera):
     grayScale = cv.cvtColor(roi,cv.COLOR_BGR2GRAY)#https://www.geeksforgeeks.org/python/python-grayscaling-of-images-using-opencv/
     currentFrame = cv.GaussianBlur(grayScale, (21, 21), 0) # blurs image so it removes noise
     #currentFrame = cv.add(currentFrame, np.array([60.0]))  
-    cv.rectangle(frame,(500,20),(700,140) ,(0,255,0), 2) #draw a rectangle to debug
+    cv.rectangle(frame,(700,20),(900,140) ,(0,255,0), 2) #draw a rectangle to debug
     if backgroundFrame is None: 
         backgroundFrame = currentFrame  #captures the first frame
         #continue # then restart while loop to capture current frames
@@ -47,17 +47,17 @@ def sense_motion(camera):
         motion_counter += 1
         #time.sleep(1) 
         #print(motion_counter) 
-
-        if motion_counter > 2:
-            return True  
+        if motion_counter == 2: #so two motions can set off light, combats extreme lighting change
+            return True
             
     else:
         backgroundFrame = cv.addWeighted(currentFrame, 0.01, backgroundFrame, 0.99, 0) #this makes the background adaptive, blends background img to current slowly
         sense.clear()
-        cv.imwrite("debug.jpg", frame)
+        cv.imwrite("debug.jpg", currentFrame)
         motion_counter = 0
+         
        
-    #backgroundFrame = currentFrame #update frame to adapt to new lighting
+    backgroundFrame = currentFrame #update frame to adapt to new lighting
         
         
 
