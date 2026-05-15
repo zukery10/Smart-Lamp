@@ -30,20 +30,3 @@ def sunset_time():
     
     return t
 
-
-
-def upload_image():
-
-    url = "http://127.0.0.1:5000"
-
-    files = {
-        "media": open("static/last_visitor.jpg", "rb")
-    }
-
-    response = requests.post(url, files=files)
-
-    print(response.json())
-
-
-
-upload_image()

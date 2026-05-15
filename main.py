@@ -8,7 +8,7 @@ from picamera2 import Picamera2
 import time
 from pi_camera_capture import capture_photo, capture_video
 import BlynkLib
-from flask import sunset_time
+from flask_web_api import sunset_time
 #https://github.com/UselessMnemonic/OpenWiz
 sense = SenseHat()
 camera = Picamera2()
@@ -73,7 +73,7 @@ while True:
 
         if enter_time_set == "1": #set time of day with enter button
             lamp_on_time = (hours + ":" + minutes +":00")  #set from blynk    
-            #blynk.virtual_write(5, lamp_on_time)
+            blynk.virtual_write(5, lamp_on_time)
             print(lamp_on_time)
         #===================================================================Security Mode===================================================================
 
