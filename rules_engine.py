@@ -9,7 +9,7 @@ sense = SenseHat()
 
 
 #https://github.com/UselessMnemonic/OpenWiz
-lamp_on_time = "15:00:00"
+#lamp_on_time = "15:00:00"
 format_time  ="%H:%M:%S"
 prev_motion = False
 light_state = getLightState()
@@ -59,7 +59,7 @@ def checkTime(lamp_on_time):
     now = datetime.now()
     now = now.strftime("%H:%M:%S")
     
-    if datetime.strptime(now,format_time) > datetime.strptime(lamp_on_time,format_time):
+    if datetime.strptime(now,format_time) > datetime.strptime(str(lamp_on_time),format_time):
         return {"time" : True}
     else: 
         return {"time" : False}

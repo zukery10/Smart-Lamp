@@ -8,6 +8,7 @@ from picamera2 import Picamera2
 import time
 from pi_camera_capture import capture_photo, capture_video
 import BlynkLib
+from flask import sunset_time
 #https://github.com/UselessMnemonic/OpenWiz
 sense = SenseHat()
 camera = Picamera2()
@@ -18,22 +19,51 @@ camera.start()
 
 blynk = BlynkLib.Blynk("1GpojHp7VRzUa6ZnrKNetsc_MfdzXPnW")
 
+
+
+# Default values
 timeLog = 0
 weatherLog = 0
 security_mode = False #secure mode is off on startup
-
 security_toggle = 0
+minutes = "00"
+hours ="12"
+enter_time_set = 0
+lamp_on_time = sunset_time()
+# blynk.virtual_write(5,lamp_on_time) #labels the time of sunset/active lamp
 
-#need to figure out method to adapt sensitivity to lighting - brighter light sets off motion
-
-lamp_on_time = "09:00:00"  #set from blynk
 
 @blynk.on("V1")
 def handle_v1_write(value):
     button_value = value[0]
-    print(f'Current button value: {button_value}')
+    #print(f'Current button value: {button_value}')
     global security_toggle 
     security_toggle = button_value
+
+@blynk.on("V2")
+def handle_v2_write(value):
+    global hours
+    hours = value[0]
+    hours = str(hours)
+    #print(f'Hours:{hours}')
+
+@blynk.on("V3")
+def handle_v3_write(value):
+    global minutes 
+    minutes = value[0]
+    minutes = str(minutes)
+    #print(f'Minutes:{minutes}')
+    
+@blynk.on("V4")
+def handle_v4_write(value):
+    global enter_time_set 
+    enter_time_set = value[0]
+    print(enter_time_set)
+    
+
+
+
+
 
 while True:
         now = time.time()
@@ -41,27 +71,31 @@ while True:
         #print("Blynk Running")
         #time.sleep(.01) 
 
-
-
+        if enter_time_set == "1": #set time of day with enter button
+            lamp_on_time = (hours + ":" + minutes +":00")  #set from blynk    
+            #blynk.virtual_write(5, lamp_on_time)
+            print(lamp_on_time)
         #===================================================================Security Mode===================================================================
 
         if security_toggle == "1":
             security_mode = True
-            #print("Secure Mode ON")
+      
 
         if security_toggle == "0":
             security_mode = False
-            #print("Secure Mode OFF")
+    
                 
-        #print(security_toggle)
+   
 
         #===================================================================Home Mode===================================================================
-        #light_state = getLightState()
+     
         timeSet = checkTime(lamp_on_time)
-        #print(capture_temp(),capture_humidity())
+        print(lamp_on_time)
+       
         #https://www.w3schools.com/python/python_dictionaries_access.asp
         if timeSet["time"] == True: # checks if time set by user for motion/daytime 
-
+            
+            print("Passed Time Test")
 
             if time.time() - weatherLog > 1800:
                 temp = capture_temp()
@@ -75,7 +109,7 @@ while True:
                 if event != None:
                     if event.get("secureMode") == True:
                         print("Secure Mode")
-                        #send alert to blynk
+                        blynk.log_event("movement_detected", "Movement Detected")
                         
                         
                         capture_photo(camera,sense)
