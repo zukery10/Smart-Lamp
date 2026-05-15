@@ -9,6 +9,7 @@ import time
 from pi_camera_capture import capture_photo, capture_video
 import BlynkLib
 from flask_web_api import sunset_time
+from cloudinary_upload import upload_image
 #https://github.com/UselessMnemonic/OpenWiz
 sense = SenseHat()
 camera = Picamera2()
@@ -29,7 +30,8 @@ security_toggle = 0
 minutes = "00"
 hours ="12"
 enter_time_set = 0
-lamp_on_time = sunset_time()
+#lamp_on_time = sunset_time()
+lamp_on_time = "00:00:00"
 # blynk.virtual_write(5,lamp_on_time) #labels the time of sunset/active lamp
 
 
@@ -52,7 +54,7 @@ def handle_v3_write(value):
     global minutes 
     minutes = value[0]
     minutes = str(minutes)
-    #print(f'Minutes:{minutes}')
+  
     
 @blynk.on("V4")
 def handle_v4_write(value):
@@ -73,8 +75,8 @@ while True:
 
         if enter_time_set == "1": #set time of day with enter button
             lamp_on_time = (hours + ":" + minutes +":00")  #set from blynk    
-            blynk.virtual_write(5, lamp_on_time)
-            print(lamp_on_time)
+            #blynk.virtual_write(5, lamp_on_time)
+            #print(lamp_on_time)
         #===================================================================Security Mode===================================================================
 
         if security_toggle == "1":
@@ -109,7 +111,8 @@ while True:
                 if event != None:
                     if event.get("secureMode") == True:
                         print("Secure Mode")
-                        blynk.log_event("movement_detected", "Movement Detected")
+                        blynk.set_property("V6", "offImageUrl", upload_image('./static/last_visitor.jpg'))
+                       #blynk.log_event("movement_detected", "Movement Detected")
                         
                         
                         capture_photo(camera,sense)
