@@ -61,11 +61,6 @@ def handle_v4_write(value):
     global enter_time_set 
     enter_time_set = value[0]
     print(enter_time_set)
-    
-
-
-
-
 
 while True:
         now = time.time()
@@ -92,12 +87,12 @@ while True:
         #===================================================================Home Mode===================================================================
      
         timeSet = checkTime(lamp_on_time)
-        print(lamp_on_time)
+        #print(lamp_on_time)
        
         #https://www.w3schools.com/python/python_dictionaries_access.asp
         if timeSet["time"] == True: # checks if time set by user for motion/daytime 
             
-            print("Passed Time Test")
+            #print("Passed Time Test")
 
             if time.time() - weatherLog > 1800:
                 temp = capture_temp()
@@ -111,11 +106,13 @@ while True:
                 if event != None:
                     if event.get("secureMode") == True:
                         print("Secure Mode")
-                        blynk.set_property("V6", "offImageUrl", upload_image('./static/last_visitor.jpg'))
-                       #blynk.log_event("movement_detected", "Movement Detected")
-                        
-                        
                         capture_photo(camera,sense)
+                        url = upload_image('./static/last_visitor.jpg')
+                        time.sleep(1)
+                        blynk.log_event("movement_detected", f"Movement Detected:\n {url}")
+                        
+                        
+                        
                         #capture_video(camera)
                 timeLog = now           
 

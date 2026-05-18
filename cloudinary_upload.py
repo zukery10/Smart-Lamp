@@ -25,7 +25,7 @@ def upload_image(image_path,
         invalidate=True,               # <-- (optional) clear cached copies
     )
     url = result["secure_url"]
-    print(url)
+    #print(url)
     return url
 
 def main():
