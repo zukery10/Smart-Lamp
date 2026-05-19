@@ -39,11 +39,10 @@ def processMotionEvent(motion, secureMode,temp):
                 "r":255,
                 "g": 255,
                 "b": 255}   
-        time.sleep(3) 
+        time.sleep(1) 
   
-    if motion and not prev_motion and secureMode:
+    if motion and not prev_motion and secureMode:  #security mode
         print("Security Breach")
-        sense.clear(255,0,0)
         return {"secureMode": True,
                 "r" : 255} #returns that there's been an alert and captures video also turns light red
     return None
@@ -98,7 +97,7 @@ def urgent_flashing(j):
                 "g": random_int2,
                 "b": random_int3,
                 "dimming" : 100,
-                
+
             }
     else:
         return {"state" : False,    

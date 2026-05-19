@@ -156,9 +156,10 @@ while True:
                         print("Secure Mode")
                         capture_photo(camera,sense)
                         url = upload_image('./static/last_visitor.jpg')
-                        time.sleep(1)
-                        blynk.log_event("movement_detected", f"Movement Detected:\n{url}")
-                        
+                        time.sleep(.05)
+                        print(url)
+                        #blynk.log_event("movement_detected", f"Movement Detected:\n{url}")
+   
                         
                         #capture_video(camera)
                 timeLog = now           

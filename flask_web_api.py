@@ -1,10 +1,10 @@
-from flask import Flask
+from flask import Flask,render_template,url_for
 import requests
 from flask_cors import CORS
 from datetime import datetime
 import json,os
 
-
+imageFeed = ""
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) #get current directory
 STATIC_DIR = os.path.join(BASE_DIR, "static") #set static directory path
@@ -31,3 +31,13 @@ def sunset_time():
     return t
 
 
+@app.route("/",methods=['GET'])
+def home():
+    image = url_for('static',filename='last_visitor.jpg')
+    return render_template('index.html', pic=image)
+
+
+def run_flask():
+    app.run(host='0.0.0.0', port=5000, debug=True)
+
+#run_flask()
