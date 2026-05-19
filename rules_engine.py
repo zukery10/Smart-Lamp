@@ -35,6 +35,7 @@ def processMotionEvent(motion, secureMode,temp):
         if light_state:
             return {"state" : light_state,
                 "temp": temp,
+                "dimming" : 70,
                 "r":255,
                 "g": 255,
                 "b": 255}   
@@ -48,19 +49,31 @@ def processMotionEvent(motion, secureMode,temp):
     return None
 
 def processTemp(temp,humidity):
-    kelvin = (2*temp) * humidity * 1.5
+    kelvin = (1.5*temp) * humidity * 1.5
     #print(kelvin)
     return int(kelvin)
         
 
-def checkTime(lamp_on_time):
+def checkTime(time_to_check):
     #lamp_on_time = "13:00:00" 
     format_time  ="%H:%M:%S"
     now = datetime.now()
     now = now.strftime("%H:%M:%S")
     
-    if datetime.strptime(now,format_time) > datetime.strptime(str(lamp_on_time),format_time):
+    if datetime.strptime(now,format_time) > datetime.strptime(str(time_to_check),format_time):
         return {"time" : True}
+    else: 
+        return {"time" : False}
+    
+def checkExactTime(time_to_check):
+    
+    format_time  ="%H:%M"
+    now = datetime.now()
+    now = now.strftime("%H:%M")
+    
+    if datetime.strptime(now,format_time) == datetime.strptime(str(time_to_check),format_time):
+        return {"time" : True}
+    
     else: 
         return {"time" : False}
     
@@ -83,8 +96,12 @@ def urgent_flashing(j):
         return {"state" : True, 
                 "r":random_int1,
                 "g": random_int2,
-                "b": random_int3
+                "b": random_int3,
+                "dimming" : 100,
+                
             }
     else:
         return {"state" : False,    
             } 
+    
+
