@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from light_controller import getLightState
 from sense_hat import SenseHat
-
+import random
 import time
 sense = SenseHat()
 
@@ -65,5 +65,26 @@ def checkTime(lamp_on_time):
         return {"time" : False}
     
 
+def wake_up_slow(brightness):
+        print(f"Returned {brightness}")
 
+        if brightness == 99: #Start flashing
+            return True
 
+        return {"state" : True,
+                "dimming" : brightness,
+        }
+
+def urgent_flashing(j):
+    random_int1 = random.randint(10,255)
+    random_int2 = random.randint(10,255)
+    random_int3 = random.randint(10,255)
+    if j%2 == 0: #every second one
+        return {"state" : True, 
+                "r":random_int1,
+                "g": random_int2,
+                "b": random_int3
+            }
+    else:
+        return {"state" : False,    
+            } 

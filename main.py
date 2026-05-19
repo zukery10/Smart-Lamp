@@ -1,10 +1,9 @@
 from motion_sensor_v1 import sense_motion
-from rules_engine import  checkTime, processMotionEvent, processTemp
+from rules_engine import  checkTime, processMotionEvent, processTemp, wake_up_slow, urgent_flashing
 from light_controller import setLightState, getLightState,setLightWarmth,sendUDP
 from sense_reader import capture_humidity, capture_temp
 from sense_hat import SenseHat
 from picamera2 import Picamera2
-#from blynk_client import initialise_functions
 import time
 from pi_camera_capture import capture_photo, capture_video
 import BlynkLib
@@ -33,7 +32,7 @@ enter_time_set = 0
 #lamp_on_time = sunset_time()
 lamp_on_time = "00:00:00"
 # blynk.virtual_write(5,lamp_on_time) #labels the time of sunset/active lamp
-
+alarm_set = True
 
 @blynk.on("V1")
 def handle_v1_write(value):
@@ -47,7 +46,6 @@ def handle_v2_write(value):
     global hours
     hours = value[0]
     hours = str(hours)
-    #print(f'Hours:{hours}')
 
 @blynk.on("V3")
 def handle_v3_write(value):
@@ -62,16 +60,21 @@ def handle_v4_write(value):
     enter_time_set = value[0]
     print(enter_time_set)
 
+@blynk.on("V6")
+def handle_v6_write(value):
+    global alarm_time
+    alarm_time = value[0]
+
+
 while True:
         now = time.time()
         blynk.run()  # Process Blynk events        
-        #print("Blynk Running")
         #time.sleep(.01) 
 
         if enter_time_set == "1": #set time of day with enter button
             lamp_on_time = (hours + ":" + minutes +":00")  #set from blynk    
-            #blynk.virtual_write(5, lamp_on_time)
-            #print(lamp_on_time)
+            #blynk.virtual_write(5, lamp_on_time)============================REMEMBER
+
         #===================================================================Security Mode===================================================================
 
         if security_toggle == "1":
@@ -81,7 +84,17 @@ while True:
         if security_toggle == "0":
             security_mode = False
     
-                
+        if alarm_set :
+            for i in range(100):
+                time.sleep(.05)
+                alarm = wake_up_slow(i)
+                sendUDP(setLightState(alarm))
+                print("SENT")
+            if alarm:
+                for j in range(100):
+                    time.sleep(.4)
+                    sendUDP(setLightState(urgent_flashing(j)))
+            alarm_set = False #turn off after
    
 
         #===================================================================Home Mode===================================================================
@@ -109,7 +122,7 @@ while True:
                         capture_photo(camera,sense)
                         url = upload_image('./static/last_visitor.jpg')
                         time.sleep(1)
-                        blynk.log_event("movement_detected", f"Movement Detected:\n {url}")
+                        blynk.log_event("movement_detected", f"Movement Detected:\n{url}")
                         
                         
                         

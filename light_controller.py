@@ -31,8 +31,11 @@ def getLightState(): #not working yet
     message = sock.recv(1024)# amount of bytes to reciece
     jdata = json.loads(message.decode('utf-8'))#https://www.reddit.com/r/Python/comments/486nl3/anyone_know_how_to_get_json_from_a_socket/
     stateValue = jdata['result']['state']#https://stackoverflow.com/questions/12934699/selecting-fields-from-json-output
+    #print(message)
     return stateValue
    
+
+#sendUDP(getLightState())
 
 def setLightState(state):
     print(state)
