@@ -34,10 +34,14 @@ def sunset_time():
 @app.route("/",methods=['GET'])
 def home():
     image = url_for('static',filename='last_visitor.jpg')
-    return render_template('index.html', pic=image)
+    movement = url_for('static',filename='movment_log.txt')
+    return render_template('index.html', pic=image, movement=movement) #https://www.youtube.com/shorts/u53hez-dWn8
+
+
+
 
 
 def run_flask():
     app.run(host='0.0.0.0', port=5000, debug=True)
 
-#run_flask()
+run_flask()

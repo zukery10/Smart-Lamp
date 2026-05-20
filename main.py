@@ -9,6 +9,7 @@ from pi_camera_capture import capture_photo
 import BlynkLib
 from flask_web_api import sunset_time
 from cloudinary_upload import upload_image
+from datetime import datetime
 #https://github.com/UselessMnemonic/OpenWiz
 sense = SenseHat()
 camera = Picamera2()
@@ -18,6 +19,7 @@ camera.start()
 
 
 blynk = BlynkLib.Blynk("1GpojHp7VRzUa6ZnrKNetsc_MfdzXPnW")
+
 
 
 
@@ -35,13 +37,14 @@ enter_alarm_set = 0
 alarm_minutes = "00"
 alarm_hours ="00"
 alarm_on_time = "00:00"
+alarm_active = "0"
+alarm_step = 0
+last_alarm_update = 0
 
 #lamp_on_time = sunset_time()
 lamp_on_time = "00:00:00"
 # blynk.virtual_write(5,lamp_on_time) #labels the time of sunset/active lamp
-alarm_active = "0"
-alarm_step = 0
-last_alarm_update = 0
+
 event = None
 
 @blynk.on("V1")
@@ -95,8 +98,20 @@ def handle_v9_write(value):
     enter_alarm_set = value[0]
     print(enter_alarm_set)
   
+
+def log_movement(check_event_type):
+
+    if check_event_type.get("secureMode") == True:
+        with open('static/movement_log.txt','a') as f: #https://www.pythontutorial.net/python-basics/python-write-text-file/
+            f.write(f"SECURITY BREACH at {datetimeNow.strftime("%m/%d/%Y, %H:%M:%S")}\n")#https://www.programiz.com/python-programming/datetime/strftime
+
+    else:
+        with open('static/movement_log.txt','a') as f: #https://www.pythontutorial.net/python-basics/python-write-text-file/
+            f.write(f"Movement Detected at {datetimeNow.strftime("%m/%d/%Y, %H:%M:%S")}\n")#https://www.programiz.com/python-programming/datetime/strftime
+
 while True:
-        now = time.time()
+        datetimeNow = datetime.now() #for movement log
+        now = time.time() #for time processing
         blynk.run()  # Process Blynk events        
         #time.sleep(.01) 
 
@@ -167,8 +182,8 @@ while True:
             if event != None:
                 alarm_active = False
                 sendUDP(setLightState(event))
-
-            #sendUDP()
+                log_movement(event)
+                
             time.sleep(0.1)
 
 

@@ -47,6 +47,8 @@ def processMotionEvent(motion, secureMode,temp):
                 "r" : 255} #returns that there's been an alert and captures video also turns light red
     return None
 
+
+
 def processTemp(temp,humidity):
     kelvin = (1.5*temp) * humidity * 1.5
     #print(kelvin)
