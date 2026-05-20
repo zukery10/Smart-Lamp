@@ -7,9 +7,10 @@ from picamera2 import Picamera2
 import time
 from pi_camera_capture import capture_photo
 import BlynkLib
-from flask_web_api import sunset_time
+from flask_web_api import sunset_time,run_flask
 from cloudinary_upload import upload_image
 from datetime import datetime
+import threading
 #https://github.com/UselessMnemonic/OpenWiz
 sense = SenseHat()
 camera = Picamera2()
@@ -23,7 +24,7 @@ blynk = BlynkLib.Blynk("1GpojHp7VRzUa6ZnrKNetsc_MfdzXPnW")
 
 
 
-# Default values
+# Default values/Initialising Variables
 timeLog = 0
 weatherLog = 0
 security_mode = False #secure mode is off on startup
@@ -46,6 +47,8 @@ lamp_on_time = "00:00:00"
 # blynk.virtual_write(5,lamp_on_time) #labels the time of sunset/active lamp
 
 event = None
+
+
 
 @blynk.on("V1")
 def handle_v1_write(value):
@@ -99,21 +102,27 @@ def handle_v9_write(value):
     print(enter_alarm_set)
   
 
-def log_movement(check_event_type):
-
-    if check_event_type.get("secureMode") == True:
-        with open('static/movement_log.txt','a') as f: #https://www.pythontutorial.net/python-basics/python-write-text-file/
-            f.write(f"SECURITY BREACH at {datetimeNow.strftime("%m/%d/%Y, %H:%M:%S")}\n")#https://www.programiz.com/python-programming/datetime/strftime
+def log_movement(check_event_type): #Inserts info from top to bottom - newest to oldest
+    with open('static/movement_log.txt','r') as f:  #https://www.reddit.com/r/learnpython/comments/mz31yw/how_can_i_append_write_a_line_to_the_top_and/
+        text = f.read() #reads exisiting text
+    if check_event_type.get("secureMode") == True: #adds new text then plus old text - overwrites old text to add new
+        with open('static/movement_log.txt','w') as f: #https://www.pythontutorial.net/python-basics/python-write-text-file/
+            f.write(f"SECURITY BREACH at {datetimeNow.strftime("%m/%d/%Y, %H:%M:%S")}\n" + text)#https://www.programiz.com/python-programming/datetime/strftime
 
     else:
-        with open('static/movement_log.txt','a') as f: #https://www.pythontutorial.net/python-basics/python-write-text-file/
-            f.write(f"Movement Detected at {datetimeNow.strftime("%m/%d/%Y, %H:%M:%S")}\n")#https://www.programiz.com/python-programming/datetime/strftime
+        with open('static/movement_log.txt','w') as f: #https://www.pythontutorial.net/python-basics/python-write-text-file/
+            f.write(f"Movement Detected at {datetimeNow.strftime("%m/%d/%Y, %H:%M:%S")}\n"+ text)#https://www.programiz.com/python-programming/datetime/strftime
 
+
+#https://www.youtube.com/watch?v=STEOavXqXkQ
+chore2 = threading.Thread(target=run_flask) #initialises the thread to start another def simultaneously
+chore2.start() #starts flask
 while True:
         datetimeNow = datetime.now() #for movement log
         now = time.time() #for time processing
         blynk.run()  # Process Blynk events        
         #time.sleep(.01) 
+        
 
         if enter_time_set == "1": #set time of day with enter button
             lamp_on_time = (hours + ":" + minutes +":00")  #set from blynk    
@@ -138,7 +147,7 @@ while True:
             alarmSet = checkExactTime(alarm_on_time)
             #alarmSet = checkExactTime("19:03")
             if alarmSet["time"] == True and event is None:
-                print("IN")
+                
                 if time.time() - last_alarm_update > 1:
                     alarm = wake_up_slow(alarm_step)
                     sendUDP(setLightState(alarm))
@@ -166,12 +175,13 @@ while True:
                 event = processMotionEvent(detection, security_mode,processTemp(temp,hum))
                 
                 if event != None:
-                    
+#===================================================================Security Mode===================================================================                    
                     if event.get("secureMode") == True:
                         print("Secure Mode")
                         capture_photo(camera,sense)
                         url = upload_image('./static/last_visitor.jpg')
                         time.sleep(.05)
+                       
                         print(url)
                         #blynk.log_event("movement_detected", f"Movement Detected:\n{url}")
    

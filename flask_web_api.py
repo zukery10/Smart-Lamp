@@ -4,7 +4,6 @@ from flask_cors import CORS
 from datetime import datetime
 import json,os
 
-imageFeed = ""
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) #get current directory
 STATIC_DIR = os.path.join(BASE_DIR, "static") #set static directory path
@@ -30,18 +29,14 @@ def sunset_time():
     
     return t
 
-
 @app.route("/",methods=['GET'])
 def home():
     image = url_for('static',filename='last_visitor.jpg')
-    movement = url_for('static',filename='movment_log.txt')
-    return render_template('index.html', pic=image, movement=movement) #https://www.youtube.com/shorts/u53hez-dWn8
-
-
-
+    with open('static/movement_log.txt' ,'r') as f:
+        content = f.read() ##https://stackoverflow.com/questions/40246702/displaying-a-txt-file-in-my-html-using-python-flask
+        
+    return render_template('index.html', pic=image, content=content) #https://www.youtube.com/shorts/u53hez-dWn8
 
 
 def run_flask():
-    app.run(host='0.0.0.0', port=5000, debug=True)
-
-run_flask()
+    app.run(host='0.0.0.0', port=5000)

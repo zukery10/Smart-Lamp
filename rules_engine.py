@@ -80,7 +80,7 @@ def checkExactTime(time_to_check):
     
 
 def wake_up_slow(brightness):
-        print(f"Returned {brightness}")
+        #print(f"Returned {brightness}")
 
         if brightness == 99: #Start flashing
             return True
