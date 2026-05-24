@@ -53,7 +53,7 @@ def sense_motion(camera):
     else:
         backgroundFrame = cv.addWeighted(currentFrame, 0.01, backgroundFrame, 0.99, 0) #this makes the background adaptive, blends background img to current slowly
         sense.clear()
-        cv.imwrite("debug.jpg", currentFrame)
+        cv.imwrite("debug.jpg", frame)
         motion_counter = 0
          
        

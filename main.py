@@ -120,90 +120,93 @@ def log_movement(check_event_type): #Inserts info from top to bottom - newest to
             f.write(f"Movement Detected at {datetimeNow.strftime("%m/%d/%Y, %H:%M:%S")}\n"+ text)#https://www.programiz.com/python-programming/datetime/strftime
 
 
-#https://www.youtube.com/watch?v=STEOavXqXkQ
-chore2 = threading.Thread(target=run_flask) #initialises the thread to start another def simultaneously
-chore2.start() #starts flask
-while True:
-        datetimeNow = datetime.now() #for movement log
-        now = time.time() #for time processing
-        blynk.run()  # Process Blynk events        
-        #time.sleep(.01) 
+
+if __name__ == "__main__":
+
+    #https://www.youtube.com/watch?v=STEOavXqXkQ
+    chore2 = threading.Thread(target=run_flask) #initialises the thread to start another def simultaneously
+    chore2.start() #starts flask
+    while True:
+            datetimeNow = datetime.now() #for movement log
+            now = time.time() #for time processing
+            blynk.run()  # Process Blynk events        
+            #time.sleep(.01) 
+            
+
+            if enter_time_set == "1": #set time of day with enter button
+                lamp_on_time = (hours + ":" + minutes +":00")  #set from blynk    
+                #blynk.virtual_write(5, lamp_on_time)============================REMEMBER
+
+            #===================================================================Security Mode===================================================================
+
+            if security_toggle == "1":
+                security_mode = True
         
 
-        if enter_time_set == "1": #set time of day with enter button
-            lamp_on_time = (hours + ":" + minutes +":00")  #set from blynk    
-            #blynk.virtual_write(5, lamp_on_time)============================REMEMBER
+            if security_toggle == "0":
+                security_mode = False
 
-        #===================================================================Security Mode===================================================================
-
-        if security_toggle == "1":
-            security_mode = True
-      
-
-        if security_toggle == "0":
-            security_mode = False
-
-        #===================================================================Alarm Mode===================================================================
+            #===================================================================Alarm Mode===================================================================
+            
+            if alarm_active == "1":
+                if enter_alarm_set == "1": #set time of day with enter button
+                    alarm_on_time = (alarm_hours + ":" + alarm_minutes)
+                    print(alarm_on_time)
+                
+                alarmSet = checkExactTime(alarm_on_time)
+                #alarmSet = checkExactTime("19:03")
+                if alarmSet["time"] == True and event is None:
+                    
+                    if time.time() - last_alarm_update > 1:
+                        alarm = wake_up_slow(alarm_step)
+                        sendUDP(setLightState(alarm))
+                        alarm_step += 1
+                        last_alarm_update = now
+                        if alarm_step == 99 :
+                            alarm_active = False #turn off after
+            #===================================================================Home Mode===================================================================
         
-        if alarm_active == "1":
-            if enter_alarm_set == "1": #set time of day with enter button
-                alarm_on_time = (alarm_hours + ":" + alarm_minutes)
-                print(alarm_on_time)
-            
-            alarmSet = checkExactTime(alarm_on_time)
-            #alarmSet = checkExactTime("19:03")
-            if alarmSet["time"] == True and event is None:
+            timeSet = checkTime(lamp_on_time)
+            #print(lamp_on_time)
+        
+            #https://www.w3schools.com/python/python_dictionaries_access.asp
+            if timeSet["time"] == True: # checks if time set by user for motion/daytime 
                 
-                if time.time() - last_alarm_update > 1:
-                    alarm = wake_up_slow(alarm_step)
-                    sendUDP(setLightState(alarm))
-                    alarm_step += 1
-                    last_alarm_update = now
-                    if alarm_step == 99 :
-                        alarm_active = False #turn off after
-        #===================================================================Home Mode===================================================================
-     
-        timeSet = checkTime(lamp_on_time)
-        #print(lamp_on_time)
-       
-        #https://www.w3schools.com/python/python_dictionaries_access.asp
-        if timeSet["time"] == True: # checks if time set by user for motion/daytime 
-            
-            #print("Passed Time Test")
+                #print("Passed Time Test")
 
-            if time.time() - weatherLog > 1800:
-                temp = capture_temp()
-                hum = capture_humidity()
+                if time.time() - weatherLog > 1800:
+                    temp = capture_temp()
+                    hum = capture_humidity()
 
 
-            if time.time() - timeLog > 0.1:
-                detection = sense_motion(camera)
-                event = processMotionEvent(detection, security_mode,processTemp(temp,hum))
-                
-                if event != None:
-#===================================================================Security Mode===================================================================                    
-                    if event.get("secureMode") == True:
-                        print("Secure Mode")
-                        capture_photo(camera,sense)
-                        url = upload_image('./static/last_visitor.jpg')
-                        time.sleep(.05)
-                       
-                        print(url)
-                        #blynk.log_event("movement_detected", f"Movement Detected:\n{url}")
-   
+                if time.time() - timeLog > 0.1:
+                    detection = sense_motion(camera)
+                    event = processMotionEvent(detection, security_mode,processTemp(temp,hum))
+                    
+                    if event != None:
+    #===================================================================Security Mode===================================================================                    
+                        if event.get("secureMode") == True:
+                            print("Secure Mode")
+                            capture_photo(camera,sense)
+                            url = upload_image('./static/last_visitor.jpg')
+                            time.sleep(.05)
                         
-                        #capture_video(camera)
-                timeLog = now           
-
-            if event != None:
-                alarm_active = False
-                sendUDP(setLightState(event))
-                log_movement(event)
-                
-            time.sleep(0.1)
-
-
+                            print(url)
+                            #blynk.log_event("movement_detected", f"Movement Detected:\n{url}")
     
+                            
+                            #capture_video(camera)
+                    timeLog = now           
+
+                if event != None:
+                    alarm_active = False
+                    sendUDP(setLightState(event))
+                    log_movement(event)
+                    
+                time.sleep(0.1)
+
+
+        
 
 
 
