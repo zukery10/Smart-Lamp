@@ -1,12 +1,16 @@
 import cloudinary
 import cloudinary.uploader
 import os
+from dotenv import find_dotenv, load_dotenv
+
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
 
 # Configure Cloudinary connection (fill these in from your dashboard)
-cloudinary.config(
-    cloud_name="dlci24gt7",   # e.g. " dhnsqvfn8p"
-    api_key="889738317595178",         # e.g. "123456789012345"
-    api_secret="BEtuE3PjkdN8b_km8VTphgtv5Wo",   # long secret string
+cloudinary.config( #uses the .env file to get token
+    cloud_name=os.getenv("cloud_name"),   # e.g. " dhnsqvfn8p"
+    api_key=os.getenv("cloud_api_key"),         # e.g. "123456789012345"
+    api_secret=os.getenv("cloud_api_secret"),   # long secret string
 )
 # Choose the local image file to upload
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))

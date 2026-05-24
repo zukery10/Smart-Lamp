@@ -4,13 +4,14 @@ from light_controller import setLightState,sendUDP
 from sense_reader import capture_humidity, capture_temp
 from sense_hat import SenseHat
 from picamera2 import Picamera2
-import time
+import time,os
 from pi_camera_capture import capture_photo
 import BlynkLib
 from flask_web_api import sunset_time,run_flask
 from cloudinary_upload import upload_image
 from datetime import datetime
 import threading
+from dotenv import find_dotenv, load_dotenv
 #https://github.com/UselessMnemonic/OpenWiz
 sense = SenseHat()
 camera = Picamera2()
@@ -19,8 +20,13 @@ camera.configure(capture_config)
 camera.start()
 
 
-blynk = BlynkLib.Blynk("1GpojHp7VRzUa6ZnrKNetsc_MfdzXPnW")
+dotenv_path = find_dotenv() #load the enviroment variable file
+load_dotenv(dotenv_path)
 
+BLYNK_AUTH_TOKEN = os.getenv("BLYNK_AUTH_TOKEN") #uses the .env file to get blynk token
+blynk = BlynkLib.Blynk(BLYNK_AUTH_TOKEN)
+
+print(BLYNK_AUTH_TOKEN)
 
 
 

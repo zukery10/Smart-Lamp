@@ -33,7 +33,7 @@ def sunset_time():
 def home():
     image = url_for('static',filename='last_visitor.jpg')
     with open('static/movement_log.txt' ,'r') as f:
-        content = f.read() ##https://stackoverflow.com/questions/40246702/displaying-a-txt-file-in-my-html-using-python-flask
+        content = f.read() #https://stackoverflow.com/questions/40246702/displaying-a-txt-file-in-my-html-using-python-flask
         
     return render_template('index.html', pic=image, content=content) #https://www.youtube.com/shorts/u53hez-dWn8
 

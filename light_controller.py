@@ -1,6 +1,10 @@
 import socket
 import time
-import json
+import json,os
+from dotenv import find_dotenv, load_dotenv
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+
 
 #https://docs.python.org/3/library/socket.html#socket.socket.recvmsg
 #https://www.youtube.com/watch?v=wyoYbMRIAFE
@@ -8,7 +12,7 @@ import json
 
 
 def sendUDP(payload):
-    UDP_IP_PLUG = "192.168.2.182"  # Plug IP
+    UDP_IP_PLUG = os.getenv("UDP_IP_PLUG")  # Plug IP
     UDP_PORT = 38899 # Port it uses from the Github ref
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # opens a new socket
     message = str(json.dumps(payload))
@@ -22,7 +26,7 @@ def getLightState(): #not working yet
     payload = {
             "method": "getPilot",
         }
-    UDP_IP_PLUG = "192.168.2.182"  # Plug IP
+    UDP_IP_PLUG = os.getenv("UDP_IP_PLUG")  # Plug IP, #uses the .env file to get IP
     UDP_PORT = 38899 # Port it uses from the Github ref
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # opens a new socket
     message = str(json.dumps(payload))
