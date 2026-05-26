@@ -9,10 +9,10 @@ A Raspberry Pi-based smart home system that combines motion-activated lighting, 
  ## Screenshots
 
  - Laptop Dashboard
-![Alt text](static/Laptopdash.png)
+![Laptop Dashboard](static/Laptop_dash.png)
 
  - Mobile Dashboard
-![Alt text](static/Mobiledash.png)
+![Mobile Dashboard](static/Mobile_dash.png)
 
 ## Features
 
