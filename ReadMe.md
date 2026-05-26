@@ -9,10 +9,10 @@ A Raspberry Pi-based smart home system that combines motion-activated lighting, 
  ## Screenshots
 
  - Laptop Dashboard
-![Alt text](/Smart-Lamp/static/Laptop%20dash.png)
+![Alt text](/Smart-Lamp/static/Laptopdash.png)
 
  - Mobile Dashboard
-![Alt text](/Smart-Lamp/static/Mobile%20dash.png)
+![Alt text](/Smart-Lamp/static/Mobiledash.png)
 
 ## Features
 
@@ -25,7 +25,7 @@ A Raspberry Pi-based smart home system that combines motion-activated lighting, 
 
 
 ## File Structure
-
+```
 Smart-Lamp/
 ├── main.py                  # Main entry point and control loop
 ├── motion_sensor_v1.py      # Camera-based motion detection (OpenCV)
@@ -40,7 +40,7 @@ Smart-Lamp/
 │   └── movement_log.txt     # Timestamped movement event log
 └── templates/
     └── index.html           # Web dashboard template
-
+```
 ## Python Files
 
  - main.py:
