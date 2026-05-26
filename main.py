@@ -26,7 +26,7 @@ load_dotenv(dotenv_path)
 BLYNK_AUTH_TOKEN = os.getenv("BLYNK_AUTH_TOKEN") #uses the .env file to get blynk token
 blynk = BlynkLib.Blynk(BLYNK_AUTH_TOKEN)
 
-print(BLYNK_AUTH_TOKEN)
+
 
 
 
@@ -48,9 +48,9 @@ alarm_active = "0"
 alarm_step = 0
 last_alarm_update = 0
 
-#lamp_on_time = sunset_time()
-lamp_on_time = "00:00:00"
-# blynk.virtual_write(5,lamp_on_time) #labels the time of sunset/active lamp
+lamp_on_time = sunset_time()
+#lamp_on_time = "00:00:00"
+blynk.virtual_write(5,lamp_on_time) #labels the time of sunset/active lamp
 
 event = None
 
@@ -135,7 +135,7 @@ if __name__ == "__main__":
 
             if enter_time_set == "1": #set time of day with enter button
                 lamp_on_time = (hours + ":" + minutes +":00")  #set from blynk    
-                #blynk.virtual_write(5, lamp_on_time)============================REMEMBER
+                blynk.virtual_write(5, lamp_on_time)#============================REMEMBER
 
             #===================================================================Security Mode===================================================================
 
@@ -192,7 +192,7 @@ if __name__ == "__main__":
                             time.sleep(.05)
                         
                             print(url)
-                            #blynk.log_event("movement_detected", f"Movement Detected:\n{url}")
+                            blynk.log_event("movement_detected", f"Movement Detected:\n{url}")
     
                             
                             #capture_video(camera)
@@ -202,7 +202,7 @@ if __name__ == "__main__":
                     alarm_active = False
                     sendUDP(setLightState(event))
                     log_movement(event)
-                    
+                 
                 time.sleep(0.1)
 
 
