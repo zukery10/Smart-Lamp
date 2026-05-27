@@ -101,6 +101,7 @@ Smart-Lamp/
 
 ## Run Project
 
+- **Note:** Ensure active hours are set accordingly before testing.
 - In the bash script of the RPI
 - Navigate to /Smart-Lamp
 - Run : python main.py
